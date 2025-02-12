@@ -43,6 +43,7 @@ func init() {
 
 	// Inicializa o handler
 	handlers.Init(client)
+	handlers.InitTasks(client)
 }
 
 func main() {
@@ -64,6 +65,12 @@ func main() {
 	r.GET("/users", handlers.GetUsers)
 	r.PUT("/users/:email", handlers.UpdateUser)
 	r.DELETE("/users/:email", handlers.DeleteUser)
+
+	//Rotas ToDo
+	r.POST("/tasks", handlers.CreateTask)
+	r.GET("/tasks", handlers.GetTasks)
+	r.PUT("/tasks/:id", handlers.UpdateTask)
+	r.DELETE("/tasks/:id", handlers.DeleteTask)
 
 	// Inicia o servidor na porta 8080
 	r.Run(":8080")
