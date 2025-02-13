@@ -53,6 +53,47 @@ function App() {
       console.error("Erro ao adicionar tarefa:", error);
     }
   };
+
+  const handleCompleted  = async (task) => {
+    try {
+      const updateStatus = {
+        description: task.description,
+        completed: true
+      }
+
+      await axios.put(`http://localhost:8080/tasks/${task._id}`, updateStatus);
+      fetchTasks();
+      setDescription("");
+      setCompleted("");
+    } catch (error) {
+      console.error("Erro ao finalizar tarefa:", error);
+    }
+  };
+
+  const handleUndo = async (task) => {
+    try {
+      const updateStatus = {
+        description: task.description,
+        completed: false
+      }
+
+      await axios.put(`http://localhost:8080/tasks/${task._id}`, updateStatus);
+      fetchTasks();
+      setDescription("");
+      setCompleted("");
+    } catch (error) {
+      console.error("Erro ao finalizar tarefa:", error);
+    }    
+  }
+
+  const handleDelete = async (task) => {
+    try {
+      await axios.delete(`http://localhost:8080/tasks/${task._id}`);
+      fetchTasks();
+    } catch (error) {
+      console.error("Erro ao finalizar tarefa:", error);
+    }    
+  }
     
   return (
     <div className="container mt-5">
@@ -93,18 +134,29 @@ function App() {
         {tasks.map((task, index) => (
           <li key={index} className="list-group-item d-flex justify-content-between align-items-center">
             <span>
-              {task.description} - 
-              <b className={`badge fs-6 ms-2 ${task.completed ? "bg-success" : "bg-warning text-black"}`}>
+              <b className={`badge fs-6 me-2 ${task.completed ? "bg-success" : "bg-warning text-black"}`}>
                 <i className={`bi fs-6 ${task.completed ? "bi-check-circle text-white" : "bi-x-circle text-black"}`}></i>
-                {task.completed ? " Concluído" : " Pendente"}
               </b>
+              {task.description}
             </span>
             <div>
+              <button
+                onClick={() => task.completed ? handleUndo(task) : handleCompleted(task) }
+                className={`btn btn-md me-2 fs-5  ${task.completed ? "btn-secondary" : "btn-success"}`}
+              >
+                {`${task.completed ? "Desfazer" : "Finalizar"}`}
+              </button>
               <button
                 onClick={() => handleEdit(task)}
                 className="btn btn-warning btn-md me-2 fs-5"
               >
                 Editar
+              </button>
+              <button
+                onClick={() => handleDelete(task)}
+                className="btn btn-danger btn-md me-2 fs-5"
+              >
+                Apagar
               </button>
             </div>
           </li>
