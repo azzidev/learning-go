@@ -77,7 +77,36 @@ func UpdateNotes(c *gin.Context) {
 
 	// Filtra pelo _id convertido
 	filter := bson.M{"_id": objectID}
-	update := bson.M{"$set": bson.M{"title": note.Title, "note": note.Note, "date": note.Date, "status": note.Status}}
+	update := bson.M{"$set": bson.M{"title": note.Title, "note": note.Note, "date": note.Date}}
+
+	_, err = notesCollection.UpdateOne(context.Background(), filter, update)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "Tarefa atualizada com sucesso!"})
+}
+
+func UpdateStatusNotes(c *gin.Context) {
+	id := c.Param("id")
+
+	// Converte o ID de string para ObjectID
+	objectID, err := primitive.ObjectIDFromHex(id)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "ID inválido"})
+		return
+	}
+
+	var note Note
+	if err := c.ShouldBindJSON(&note); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	// Filtra pelo _id convertido
+	filter := bson.M{"_id": objectID}
+	update := bson.M{"$set": bson.M{"date": note.Date, "status": note.Status}}
 
 	_, err = notesCollection.UpdateOne(context.Background(), filter, update)
 	if err != nil {
