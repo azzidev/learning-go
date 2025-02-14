@@ -68,6 +68,7 @@ func main() {
 	r.POST("/notes", handlers.CreateNotes)
 	r.GET("/notes", handlers.GetNotes)
 	r.PUT("/notes/:id", handlers.UpdateNotes)
+	r.PUT("/notes/:id/status", handlers.UpdateStatusNotes)
 	r.DELETE("/notes/:id", handlers.DeleteNotes)
 
 	// Inicia o servidor na porta 8080
