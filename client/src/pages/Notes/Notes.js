@@ -53,14 +53,16 @@ function App() {
     try {
       setDate(CurrentDate());
       setStatus(false);
+
       await axios.post("http://localhost:8080/notes", { title, note, date, status });
+
       fetchNotes();
       setTitle("");
       setNote("");
       setDate("");
       setStatus(null);
     } catch (error) {
-      console.error("Erro ao adicionar notas:", error);
+      console.error("Erro ao adicionar nota:", error);
     }
   };
 
@@ -69,13 +71,31 @@ function App() {
       await axios.delete(`http://localhost:8080/notes/${note._id}`);
       fetchNotes();
     } catch (error) {
-      console.error("Erro ao deletar notas:", error);
+      console.error("Erro ao deletar nota:", error);
+    }
+  }
+
+  const handleArchive = async (note) => {
+    try {
+      const newStatus = !note.status;
+      const updatedDate = CurrentDate();
+
+      await axios.put(`http://localhost:8080/notes/${note._id}`, {
+        title: note.title, 
+        note: note.note, 
+        date: updatedDate, 
+        status: newStatus 
+      });
+
+      fetchNotes();
+    } catch (error) {
+      console.error("Erro ao arquivar nota:", error);
     }
   }
 
   return (
-    <div className="container mt-5">
-      <h1 className="text-center mb-4">Exemplo de Notes</h1>
+    <div className="container">
+      <h1 className="text-center mt-4 mb-4">Exemplo de Notes</h1>
 
       <form onSubmit={editNotes ? handleUpdate : handleSubmit} className="mb-4">
         <div className="mb-3">
@@ -106,31 +126,50 @@ function App() {
       </form>
       <h1 className="mb-3">Notas</h1>
       <div className="row mb-5">
-        {notes.map((note, index) => (
-          <div key={index} className="col-md-4 col-sm-12 py-2 d-flex">
-            <div className="card">
-              <div className="card-header">
-                <h3 className="mb-0">{note.title}</h3>
-              </div>
-              <div className="card-body">
-                <p className="mb-0">{note.note}</p>
-              </div>
-              <div className="card-footer">
-                <div className="d-flex align-items-center justify-content-center gap-2 me-auto">
-                  <button 
-                    type="button" 
-                    onClick={() => handleEdit(note)} 
-                    className="btn btn-sm btn-info rounded-pill text-white"
-                  >Editar nota</button>
-                  <button type="button" className="btn btn-sm btn-secondary rounded-pill text-white">Arquivar nota</button>
-                  <button type="button" className="btn btn-sm btn-danger rounded-pill" onClick={() => handleDelete(note)} >Deletar nota</button>
+        {notes
+          .filter(note => !note.status)
+          .map((note, index) => (
+            <div key={index} className="col-md-4 col-sm-12 py-2 d-flex">
+              <div className="card">
+                <div className="card-header">
+                  <h3 className="mb-0">{note.title}</h3>
                 </div>
-                <p className="text-center mt-2 small mb-0">última atualização: {FormatDate(note.date)}</p>
+                <div className="card-body">
+                  <p className="mb-0">{note.note}</p>
+                </div>
+                <div className="card-footer">
+                  <div className="d-flex align-items-center justify-content-center gap-2 me-auto">
+                    <button 
+                      type="button" 
+                      onClick={() => handleEdit(note)} 
+                      className="btn btn-sm btn-info rounded-pill text-white"
+                    >Editar nota</button>
+                    <button type="button" className="btn btn-sm btn-secondary rounded-pill text-white" onClick={() => handleArchive(note)}>Arquivar nota</button>
+                    <button type="button" className="btn btn-sm btn-danger rounded-pill" onClick={() => handleDelete(note)} >Deletar nota</button>
+                  </div>
+                  <p className="text-center mt-2 small mb-0">última atualização: {FormatDate(note.date)}</p>
+                </div>
               </div>
             </div>
-          </div>
-        ))}
+          ))
+        }
       </div>
+
+      <h3 className="mb-3">Notas arquivadas</h3>
+      <ul className="list-group mb-5">
+        {notes
+          .filter(note => note.status)
+          .map((note, index) => (
+            <li key={index} className="list-group-item d-flex justify-content-between align-items-center">
+              <span>{note.title}</span>
+              <div className="d-flex gap-2">
+                <button type="button" className="btn btn-sm me-auto btn-warning rounded-pill" onClick={() => handleArchive(note)}>Desarquivar nota</button>
+                <button type="button" className="btn btn-sm btn-danger rounded-pill" onClick={() => handleDelete(note)} >Deletar nota</button>
+              </div>
+            </li>
+          ))
+        }
+      </ul>
     </div>
   );
 }
