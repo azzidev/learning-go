@@ -89,5 +89,21 @@ func UpdateNotes(c *gin.Context) {
 }
 
 func DeleteNotes(c *gin.Context) {
+	id := c.Param("id")
 
+	// Converte o ID de string para ObjectID
+	objectID, err := primitive.ObjectIDFromHex(id)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "ID inválido"})
+		return
+	}
+
+	filter := bson.M{"_id": objectID}
+	_, err = notesCollection.DeleteOne(context.Background(), filter)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "Nota deletada com sucesso!"})
 }

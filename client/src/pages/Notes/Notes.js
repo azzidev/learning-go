@@ -35,12 +35,17 @@ function App() {
   };
 
   const handleUpdate = async (e) => {
-    await axios.put(`http://localhost:8080/notes/${editNotes._id}`, { title, note, date, status });
-    fetchNotes();
-    setTitle("");
-    setNote("");
-    setDate("");
-    setStatus(null);
+    e.preventDefault();
+    try {
+      await axios.put(`http://localhost:8080/notes/${editNotes._id}`, { title, note, date, status });
+      fetchNotes();
+      setTitle("");
+      setNote("");
+      setDate("");
+      setStatus(null);
+    } catch (error) {
+      console.error("Erro ao atualizar notas:", error);
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -58,6 +63,15 @@ function App() {
       console.error("Erro ao adicionar notas:", error);
     }
   };
+
+  const handleDelete = async (note) => {
+    try {
+      await axios.delete(`http://localhost:8080/notes/${note._id}`);
+      fetchNotes();
+    } catch (error) {
+      console.error("Erro ao deletar notas:", error);
+    }
+  }
 
   return (
     <div className="container mt-5">
@@ -91,9 +105,9 @@ function App() {
         </div>
       </form>
       <h1 className="mb-3">Notas</h1>
-      <div className="row">
+      <div className="row mb-5">
         {notes.map((note, index) => (
-          <div key={index} className="col-md-4 col-sm-12 py-2">
+          <div key={index} className="col-md-4 col-sm-12 py-2 d-flex">
             <div className="card">
               <div className="card-header">
                 <h3 className="mb-0">{note.title}</h3>
@@ -102,15 +116,16 @@ function App() {
                 <p className="mb-0">{note.note}</p>
               </div>
               <div className="card-footer">
-                <div className="d-flex align-items-center justify-content-end gap-2 me-auto">
+                <div className="d-flex align-items-center justify-content-center gap-2 me-auto">
                   <button 
                     type="button" 
                     onClick={() => handleEdit(note)} 
                     className="btn btn-sm btn-info rounded-pill text-white"
                   >Editar nota</button>
-                  <button type="button" className={`btn btn-sm ${note.status ? "btn-secondary" : "btn-success"} rounded-pill text-white`}>{note.status ? "Desfazer conclusão" : "Finalizar nota"}</button>
-                  <p className="small mb-0">{FormatDate(note.date)}</p>
+                  <button type="button" className="btn btn-sm btn-secondary rounded-pill text-white">Arquivar nota</button>
+                  <button type="button" className="btn btn-sm btn-danger rounded-pill" onClick={() => handleDelete(note)} >Deletar nota</button>
                 </div>
+                <p className="text-center mt-2 small mb-0">última atualização: {FormatDate(note.date)}</p>
               </div>
             </div>
           </div>
