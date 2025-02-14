@@ -16,6 +16,11 @@ function Home() {
             ToDo
           </Link>
         </li>
+        <li className="list-group-item">
+          <Link to="/notes" className="text-decoration-none">
+            Notes Block
+          </Link>
+        </li>
         {/* Adicione mais projetos aqui */}
       </ul>
     </div>
