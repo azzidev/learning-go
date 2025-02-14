@@ -95,7 +95,7 @@ function App() {
 
   return (
     <div className="container">
-      <h1 className="text-center mt-4 mb-4">Exemplo de Notes</h1>
+      <h1 className="text-center fw-bold mt-4 mb-4">Exemplo de Notes</h1>
 
       <form onSubmit={editNotes ? handleUpdate : handleSubmit} className="mb-4">
         <div className="mb-3">
@@ -124,15 +124,15 @@ function App() {
           </div>
         </div>
       </form>
-      <h1 className="mb-3">Notas</h1>
+      <h3 className="mb-3 fw-bold">Notas</h3>
       <div className="row mb-5">
         {notes
           .filter(note => !note.status)
           .map((note, index) => (
             <div key={index} className="col-md-4 col-sm-12 py-2 d-flex">
-              <div className="card">
+              <div className="card rounded-4">
                 <div className="card-header">
-                  <h3 className="mb-0">{note.title}</h3>
+                  <h4 className="mb-0 fw-bold">{note.title}</h4>
                 </div>
                 <div className="card-body">
                   <p className="mb-0">{note.note}</p>
@@ -155,12 +155,12 @@ function App() {
         }
       </div>
 
-      <h3 className="mb-3">Notas arquivadas</h3>
+      <h3 className="mb-3 fw-bold">Notas arquivadas</h3>
       <ul className="list-group mb-5">
         {notes
           .filter(note => note.status)
           .map((note, index) => (
-            <li key={index} className="list-group-item d-flex justify-content-between align-items-center">
+            <li key={index} className="list-group-item d-flex rouded-4 justify-content-between align-items-center">
               <span>{note.title}</span>
               <div className="d-flex gap-2">
                 <button type="button" className="btn btn-sm me-auto btn-warning rounded-pill" onClick={() => handleArchive(note)}>Desarquivar nota</button>
