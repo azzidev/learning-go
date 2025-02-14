@@ -37,12 +37,11 @@ function App() {
   const handleUpdate = async (e) => {
     e.preventDefault();
     try {
-      await axios.put(`http://localhost:8080/notes/${editNotes._id}`, { title, note, date, status });
+      await axios.put(`http://localhost:8080/notes/${editNotes._id}`, { title, note, date });
       fetchNotes();
       setTitle("");
       setNote("");
       setDate("");
-      setStatus(null);
     } catch (error) {
       console.error("Erro ao atualizar notas:", error);
     }
@@ -80,9 +79,7 @@ function App() {
       const newStatus = !note.status;
       const updatedDate = CurrentDate();
 
-      await axios.put(`http://localhost:8080/notes/${note._id}`, {
-        title: note.title, 
-        note: note.note, 
+      await axios.put(`http://localhost:8080/notes/${note._id}/status`, {
         date: updatedDate, 
         status: newStatus 
       });
