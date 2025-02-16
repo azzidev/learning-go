@@ -6,7 +6,17 @@ function App() {
   const [users, setUsers] = useState([]);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [editUser, setEditUser] = useState(null);
+
+  //Configurando o axios para enviar o token jwt
+  axios.interceptors.request.use((config) => {
+    const token = localStorage.getItem("token"); // Recupera o token do localStorage
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`; // Adiciona o token no cabeçalho
+    }
+    return config;
+  });
 
   useEffect(() => {
     fetchUsers();
@@ -28,6 +38,7 @@ function App() {
       fetchUsers();
       setName("");
       setEmail("");
+      setPassword("");
     } catch (error) {
       console.error("Erro ao adicionar usuário:", error);
     }
@@ -81,6 +92,16 @@ function App() {
             placeholder="Email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
+            className="form-control"
+            required
+          />
+        </div>
+        <div className="mb-3">
+          <input
+            type="password"
+            placeholder="Senha"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
             className="form-control"
             required
           />
