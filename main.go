@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"learning-go/handlers"
+	"learning-go/middleware"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
@@ -46,17 +47,18 @@ func main() {
 	r.Use(cors.New(cors.Config{
 		AllowOrigins:     []string{"http://localhost:3000"}, // Permite o frontend React
 		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
-		AllowHeaders:     []string{"Origin", "Content-Type", "Accept"},
+		AllowHeaders:     []string{"Origin", "Content-Type", "Accept", "Authorization"},
 		ExposeHeaders:    []string{"Content-Length"},
 		AllowCredentials: true,
 		MaxAge:           12 * time.Hour,
 	}))
 
 	// Rotas CRUD
-	r.POST("/users", handlers.CreateUser)
-	r.GET("/users", handlers.GetUsers)
-	r.PUT("/users/:email", handlers.UpdateUser)
-	r.DELETE("/users/:email", handlers.DeleteUser)
+	r.POST("/users/login", handlers.LoginUser)
+	r.POST("/users", middleware.AuthMiddleware(), handlers.CreateUser)
+	r.GET("/users", middleware.AuthMiddleware(), handlers.GetUsers)
+	r.PUT("/users/:email", middleware.AuthMiddleware(), handlers.UpdateUser)
+	r.DELETE("/users/:email", middleware.AuthMiddleware(), handlers.DeleteUser)
 
 	//Rotas ToDo
 	r.POST("/tasks", handlers.CreateTask)
